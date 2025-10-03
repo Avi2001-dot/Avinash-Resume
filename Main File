@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avinash Singh - Interactive Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The application is designed as a single-page, vertical-scrolling portfolio with a sticky top navigation for quick access to key sections. The structure flows from a high-level summary to specific, detailed evidence: Summary -> Skills (visualized) -> Experience (timeline) -> Projects (interactive cards). This hierarchy allows recruiters to get a quick overview and then dive deeper into the areas that interest them most. The interactive elements (charts, expandable cards) are chosen to present dense information in a digestible format without overwhelming the user, promoting exploration over static reading. -->
+    <!-- Visualization & Content Choices: 
+        - Professional Summary: (Goal: Inform) -> Standard text block for immediate context.
+        - Technical Skills: (Goal: Organize/Compare) -> Donut Chart (Chart.js) and styled cards. Interaction: Visual grouping and a chart to quickly show the breadth of skills in different areas. Justification: More engaging and scannable than a long bulleted list.
+        - Experience: (Goal: Show Change/Inform) -> Vertical Timeline (HTML/CSS/JS). Interaction: Clicking on a job title reveals details. Justification: Visually represents career progression and chronology effectively.
+        - Projects: (Goal: Organize/Inform) -> Card Grid (HTML/CSS/JS). Interaction: Expandable cards to show more details on click. Justification: Keeps the initial layout clean and allows users to explore projects of interest without leaving the page.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #333333;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #2563EB;
+            border-bottom-color: #2563EB;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #2563EB;
+            border: 4px solid #F8F7F4;
+        }
+        .timeline-path {
+            position: absolute;
+            left: -21px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #DBEAFE;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .project-card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-gray-800">Avinash Singh</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#summary" class="nav-link">Summary</a>
+                <a href="#skills" class="nav-link">Skills</a>
+                <a href="#experience" class="nav-link">Experience</a>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#education" class="nav-link">Education</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden p-2">
+                 <span class="block w-6 h-0.5 bg-gray-600 mb-1"></span>
+                 <span class="block w-6 h-0.5 bg-gray-600 mb-1"></span>
+                 <span class="block w-6 h-0.5 bg-gray-600"></span>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#summary" class="block py-2 px-6 text-sm text-gray-700 hover:bg-gray-100">Summary</a>
+            <a href="#skills" class="block py-2 px-6 text-sm text-gray-700 hover:bg-gray-100">Skills</a>
+            <a href="#experience" class="block py-2 px-6 text-sm text-gray-700 hover:bg-gray-100">Experience</a>
+            <a href="#projects" class="block py-2 px-6 text-sm text-gray-700 hover:bg-gray-100">Projects</a>
+            <a href="#education" class="block py-2 px-6 text-sm text-gray-700 hover:bg-gray-100">Education</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section id="summary" class="mb-20 text-center">
+            <h1 class="text-5xl font-bold mb-2">Avinash Singh</h1>
+            <p class="text-xl text-blue-600 mb-6">Data Engineer & Research Analyst</p>
+            <div class="flex justify-center space-x-4 mb-8 text-sm text-gray-600">
+                <span>+91-6377815813</span>
+                <span>•</span>
+                <span>avinashsinghcr@gmail.com</span>
+                <span>•</span>
+                <span>Jaipur, Rajasthan</span>
+            </div>
+             <div class="flex justify-center space-x-6 mb-8">
+                <a href="https://www.linkedin.com/" target="_blank" class="text-blue-600 hover:underline">LinkedIn</a>
+                <a href="https://github.com/" target="_blank" class="text-blue-600 hover:underline">GitHub</a>
+            </div>
+            <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed">
+                Highly motivated Data Engineer and Research Analyst with over 2 years of experience in data analysis, statistical modeling, and developing web-based solutions. Eager to leverage a strong background in Python, JavaScript, and cloud technologies (GCP, AWS) to transition into a Cloud Administrator role. Proven ability in managing code repositories, deploying applications, and contributing to cloud infrastructure projects. Currently enhancing expertise by pursuing an M.Tech in Data Engineering from IIT Jodhpur.
+            </p>
+        </section>
+
+        <section id="skills" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-4">Technical Skills</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">This section provides an overview of my technical capabilities, categorized for clarity. The chart visualizes the distribution of my skills across key areas, while the cards detail specific technologies I'm proficient in.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                <div class="chart-container">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-bold text-lg mb-2">Programming & Languages</h3>
+                        <p class="text-sm text-gray-600">Python, JavaScript, TypeScript, R, SQL, MATLAB</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-bold text-lg mb-2">Cloud & DevOps</h3>
+                        <p class="text-sm text-gray-600">GCP, AWS, VirtualBox, Docker</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-bold text-lg mb-2">Databases</h3>
+                        <p class="text-sm text-gray-600">MySQL, DynamoDB, RDS</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-bold text-lg mb-2">Data Science & ML</h3>
+                        <p class="text-sm text-gray-600">Machine Learning, Statistical Analysis, Prophet, Pandas, NumPy, Deep-Learning</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-10">Professional Experience</h2>
+             <div class="relative pl-8">
+                <div class="timeline-path"></div>
+                <div class="timeline-item mb-12 relative">
+                    <h3 class="text-xl font-semibold">Software Developer and Research Analyst</h3>
+                    <p class="text-md text-gray-600">Insightpier | 02/2025 – Present</p>
+                    <ul class="mt-4 list-disc list-inside text-gray-700 space-y-2">
+                        <li>Create API in AWS API gateway by using CDK, Lambda, dynamoDB, S3 Bucket, RDS, IAM, CloudWatch.</li>
+                        <li>Collaborated with backend teams to integrate RESTful APIs, ensuring seamless data flow within a cloud-based application environment.</li>
+                        <li>Utilized Git and GitHub for version control, code management, and collaborative development across multiple projects.</li>
+                        <li>Developed and maintained responsive front-end components for the company's primary Article Page using JavaScript and CSS.</li>
+                        <li>Contributed to the deployment and maintenance of applications on cloud infrastructure, focusing on scalability and high availability.</li>
+                    </ul>
+                </div>
+                <div class="timeline-item relative">
+                    <h3 class="text-xl font-semibold">Technical Research Analyst</h3>
+                    <p class="text-md text-gray-600">Zucol | 03/2023 – 02/2025</p>
+                    <ul class="mt-4 list-disc list-inside text-gray-700 space-y-2">
+                        <li>Leveraged Python, R, and SQL to conduct in-depth data analysis for diverse clients, delivering actionable insights for research projects.</li>
+                        <li>Assisted students and researchers in analyzing complex datasets, generating statistical results, and interpreting data to meet research objectives.</li>
+                        <li>Authored and maintained comprehensive documentation for analytical processes, ensuring transparency, reproducibility, and clear progress tracking.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-4">Projects</h2>
+             <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">Here are some of the key projects I've worked on, showcasing my ability to apply technical skills to solve real-world problems. Click on any project to see more details about the implementation and outcomes.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="project-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Hybrid Cloud Auto-Scaling Solution</h3>
+                        <button class="project-toggle text-blue-600 text-sm font-semibold">Show Details</button>
+                        <div class="project-card-content mt-4 text-gray-700 text-sm">
+                            <p>Engineered a hybrid cloud environment by configuring a local VM with resource monitoring that triggered auto-scaling to a public cloud (GCP/AWS) when resource utilization exceeded a 75% threshold, ensuring optimal performance.</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="project-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Scalable Cloud Data Warehouse</h3>
+                        <button class="project-toggle text-blue-600 text-sm font-semibold">Show Details</button>
+                        <div class="project-card-content mt-4 text-gray-700 text-sm">
+                            <p>Designed a modern, cloud-based data warehouse architecture to overcome the latency and volume limitations of traditional systems, enabling high-velocity, real-time analytics capabilities.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Stock Price Forecasting Model</h3>
+                        <button class="project-toggle text-blue-600 text-sm font-semibold">Show Details</button>
+                        <div class="project-card-content mt-4 text-gray-700 text-sm">
+                            <p>Developed a predictive model using SMA, EMA, ARIMA, and Prophet to forecast stock prices. Evaluated model accuracy using Mean Absolute Percentage Error (MAPE) and delivered comprehensive reports with seasonal analysis and data visualizations.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">GCP Secure & Auto-Scaling VM</h3>
+                        <button class="project-toggle text-blue-600 text-sm font-semibold">Show Details</button>
+                        <div class="project-card-content mt-4 text-gray-700 text-sm">
+                            <p>Deployed and configured a virtual machine on Google Cloud Platform, implementing robust auto-scaling policies and securing the environment with fine-grained IAM roles and firewall rules.</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="project-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Weather Forecast Application</h3>
+                        <button class="project-toggle text-blue-600 text-sm font-semibold">Show Details</button>
+                        <div class="project-card-content mt-4 text-gray-700 text-sm">
+                            <p>Built a full-stack weather forecasting application using Python and JavaScript. Integrated a third-party API to fetch and display real-time weather conditions and wind speed predictions for cities worldwide.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="education" class="mb-20 bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-3xl font-bold text-center mb-6">Education & Certifications</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+                <div>
+                    <h3 class="text-xl font-semibold">M.Tech in Data Engineering</h3>
+                    <p class="text-gray-600">Indian Institute of Technology Jodhpur (Remote)</p>
+                    <p class="text-sm text-gray-500">07/2024 – Present</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold">B.Tech in Mechanical Engineering</h3>
+                    <p class="text-gray-600">Rajasthan Technical University – Skit Campus, Jaipur</p>
+                    <p class="text-sm text-gray-500">07/2018 – 06/2022</p>
+                </div>
+                <div class="md:col-span-2 border-t pt-8 mt-4">
+                    <h3 class="text-xl font-semibold mb-4">Achievements & Certifications</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li>JPMorgan Chase & Co. - Quantitative Research Job Simulation</li>
+                        <li>SAP - Technical Consulting Job Simulation</li>
+                        <li>Star Performer of the Month | Zucol</li>
+                        <li>Bright Beginning Award of the Quarter | Zucol</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-4">
+        <p>&copy; 2025 Avinash Singh. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const skillsData = {
+                labels: ['Programming & Languages', 'Cloud & DevOps', 'Databases', 'Data Science & ML'],
+                datasets: [{
+                    label: 'Skills Distribution',
+                    data: [6, 4, 3, 6],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)'
+                    ],
+                    borderColor: '#F8F7F4',
+                    borderWidth: 4
+                }]
+            };
+
+            const config = {
+                type: 'doughnut',
+                data: skillsData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#333333',
+                                font: {
+                                    size: 14,
+                                    family: 'Inter'
+                                }
+                            }
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + ' skills';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                },
+            };
+
+            const skillsChartCtx = document.getElementById('skillsChart').getContext('2d');
+            new Chart(skillsChartCtx, config);
+            
+            const projectToggles = document.querySelectorAll('.project-toggle');
+            projectToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const content = toggle.nextElementSibling;
+                    const isExpanded = content.style.maxHeight && content.style.maxHeight !== '0px';
+                    if (isExpanded) {
+                        content.style.maxHeight = '0px';
+                        toggle.textContent = 'Show Details';
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        toggle.textContent = 'Hide Details';
+                    }
+                });
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if(pageYOffset >= sectionTop - 100){
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if(link.getAttribute('href').includes(current)){
+                        link.classList.add('active');
+                    }
+                })
+            });
+        });
+    </script>
+</body>
+</html>
